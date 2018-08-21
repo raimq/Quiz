@@ -17,7 +17,7 @@ use Quiz\Models\UserModel;
 use Quiz\Repositories\QuizRepository;
 use Quiz\Repositories\UserAnswerRepository;
 use Quiz\Repositories\UserRepository;
-use Quiz\Services\QuizService;
+use Quiz\Services\QuizServiceTwo;
 
 class ServicesTest extends TestCase
 {
@@ -30,7 +30,7 @@ class ServicesTest extends TestCase
     /** @var QuizRepository */
     private $quizRepo;
 
-    /** @var QuizService */
+    /** @var QuizServiceTwo */
     private $service;
 
     public function setUp()
@@ -40,7 +40,7 @@ class ServicesTest extends TestCase
         $this->quizRepo = new QuizRepository();
         $this->userRepo = new UserRepository();
         $this->userAnswerRepo = new UserAnswerRepository;
-        $this->service = new QuizService($this->quizRepo, $this->userRepo, $this->userAnswerRepo);
+        $this->service = new QuizServiceTwo($this->quizRepo, $this->userRepo, $this->userAnswerRepo);
     }
 
     function testGetListOfQuizes()

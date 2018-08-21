@@ -11,7 +11,7 @@ use Quiz\Models\UserModel;
 use Quiz\Repositories\QuizRepository;
 use Quiz\Repositories\UserAnswerRepository;
 use Quiz\Repositories\UserRepository;
-use Quiz\Services\QuizService;
+use Quiz\Services\QuizServiceTwo;
 
 class QuizTest extends TestCase
 {
@@ -171,7 +171,7 @@ class QuizTest extends TestCase
         $userRepo = new UserRepository;
         $quizRepo = new QuizRepository;
 
-        $service = new QuizService($quizRepo, $userRepo, $userAnswerRepo);
+        $service = new QuizServiceTwo($quizRepo, $userRepo, $userAnswerRepo);
 
         // Add a quiz model to repositoru
         $quiz = new QuizModel;

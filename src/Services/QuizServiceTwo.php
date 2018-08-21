@@ -11,7 +11,7 @@ use Quiz\Repositories\QuizRepository;
 use Quiz\Repositories\UserAnswerRepository;
 use Quiz\Repositories\UserRepository;
 
-class QuizService
+class QuizServiceTwo
 {
     /** @var QuizRepository */
     private $quizes;

@@ -7,6 +7,10 @@
     }
   ],
   "require": {
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-mcrypt": "*",
+    "ext-json":"*"
   },
   "autoload": {
     "psr-4": {
