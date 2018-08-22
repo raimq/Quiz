@@ -28,6 +28,8 @@ export default class Api {
      * @return {AxiosPromise}
      */
     post(action, params) {
+        console.log('params');
+        console.log(params);
         return Vue.axios.post(this.buildUrl(action), params ? params : {});
     }
 

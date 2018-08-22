@@ -1,0 +1,136 @@
+.container {
+  font-size: 10px;
+
+
+  &__title {
+    font-weight: bold;
+    padding-top: 50px;
+    padding-bottom: 30px;
+    font-size: 30px;
+    margin: auto;
+    text-align: center;
+  }
+
+
+  &__input {
+    margin: auto;
+    padding: 12px 20px;
+    border: 3px solid ;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: 50%;
+
+    background: green;
+
+    &__inputFields {
+      width: 100%;
+      margin-bottom: 10px;
+      height: 20px;
+
+    }
+
+    &__labels{
+      text-align: left;
+
+    }
+
+    &__button {
+      height: 25px;
+      width: 30%;
+      margin: 20px;
+    }
+  }
+
+  &__questions {
+
+    &__question {
+      font-size: 30px;
+      text-align: center;
+    }
+
+    &__answers {
+      margin-bottom: 20px;
+      overflow: hidden;
+
+      &__item {
+        width: 43%;
+        border: 3px solid;
+        margin: 7px 2.5%;
+        font-size: 25px;
+        text-decoration: none;
+        line-height: 1.5em;
+        text-align: center;
+        float: left;
+        display: inline;
+        background: green;
+        border-radius: 14px;
+        background-clip: padding-box;;
+
+        a {
+          display: inline-block;
+          position: relative;
+          z-index: 1;
+          margin-bottom: 15px;
+          margin-right: 5%;
+          width: 100%;
+          margin: -1em;
+        }
+
+        &__listText {
+          text-decoration: none;
+          color: black;
+        }
+        &__listText:focus {
+
+          text-decoration: none;
+
+          border: 2px solid;
+          border-radius: 14px;
+          background-clip: padding-box;
+          background: #14c401;
+        }
+      }
+
+    }
+
+    &__button {
+      margin: auto;
+      text-align: center;
+      width: 100%;
+      color: yellow;
+
+      &_text {
+        width: 20%;
+        height: 30px;
+        text-align: center;
+      }
+
+    }
+
+  }
+  &__results {
+    margin: auto;
+    font-size: 20px;
+    border-style: solid;
+    background: green;
+    width: 70%;
+
+    &__title {
+      padding: 30px;
+      font-size: 30px;
+      text-align: center;
+      margin: 10px;
+    }
+
+    &__button {
+      width: 20%;
+      height: 30px;
+      margin: 30px;
+
+    }
+
+  }
+
+}
+
+

@@ -1,5 +1,5 @@
 <template>
-    <a href="#" @click="onAnswerPicked">{{answer.answer}}</a>
+    <a href="#" @click="onAnswerPicked" :class="isActive ? 'active' : ''">{{ answer.answer }}</a>
 </template>
 
 <script>
@@ -15,11 +15,13 @@
             onAnswered: {
                 type: Function,
                 required: true,
-            }
+            },
+            isActive:Boolean,
         },
 
         methods: {
             onAnswerPicked() {
+                console.log(this.answer.id);
                 this.onAnswered(this.answer.id);
             }
         }

@@ -1,15 +1,20 @@
 <template>
 
-    <div>
-        <h1>{{question.question}}</h1>
+    <div class="container__questions">
+        <h2 class="container__questions__question">{{question.question}}</h2>
+        <ul class="container__questions__answers">
+            <li class="container__questions__answers__item" v-for="answer in question.answers" >
+                <AnswerItem class="container__questions__answers__item__listText" :answer="answer"
+                            :on-answered="onAnswerPicked"/>
 
-        <ul>
-            <li v-for="answer in question.answers">
-                <AnswerItem :answer="answer" :on-answered="onAnswerPicked"/>
             </li>
-        </ul>
-        <button @click="onAnswered">Next Question</button>
 
+
+        </ul>
+
+        <div class="container__questions__button">
+            <button class="container__questions__button_text" @click.stop="onAnswered">Next Question</button>
+        </div>
     </div>
 
 </template>
@@ -39,15 +44,21 @@
             ]),
             {
                 onAnswerPicked(answerId) {
+                    console.log(answerId);
                     this.answerId = answerId;
                 },
 
                 onAnswered() {
                     if (!this.answerId) {
-                        alert('noAnswerPicked');
-                        return;
+                        alert('No answer picked');
                     }
+                    console.log(this.answerId);
                     this.answer(this.answerId);
+                    this.reset();
+                },
+
+                reset() {
+                    this.answerId = null;
                 }
 
             }

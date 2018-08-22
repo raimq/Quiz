@@ -3,7 +3,6 @@
 namespace Quiz\Repositories;
 
 
-use PDO;
 use Quiz\Interfaces\RepositoryInterface;
 use Quiz\Models\BaseModel;
 use Quiz\MySQL\MysqlConnection;

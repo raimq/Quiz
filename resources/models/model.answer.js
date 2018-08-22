@@ -19,7 +19,6 @@ export default class Answer {
         let answer = new Answer();
         answer.id = rawData.id;
         answer.answer = rawData.answer;
-
         return answer;
     }
 

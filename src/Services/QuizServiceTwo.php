@@ -2,222 +2,181 @@
 
 namespace Quiz\Services;
 
-use Quiz\Models\AnswerModel;
-use Quiz\Models\QuestionModel;
-use Quiz\Models\QuizModel;
+
+use Quiz\Models\BaseModel;
+use Quiz\Models\ScoreModel;
 use Quiz\Models\UserAnswerModel;
-use Quiz\Models\UserModel;
-use Quiz\Repositories\QuizRepository;
-use Quiz\Repositories\UserAnswerRepository;
-use Quiz\Repositories\UserRepository;
+use Quiz\Repositories\AnswerDataBaseRepository;
+use Quiz\Repositories\QuestionDatabaseRepository;
+use Quiz\Repositories\QuizDataBaseRepository;
+use Quiz\Repositories\UserAnswerDataBaseRepository;
+use Quiz\Repositories\UserDataBaseRepository;
+use Quiz\Repositories\UserScoreDataBaseRepository;
 
 class QuizServiceTwo
 {
-    /** @var QuizRepository */
-    private $quizes;
-    /** @var UserRepository */
-    private $users;
-    /** @var UserAnswerRepository */
-    private $userAnswers;
+    /** @var QuizDataBaseRepository */
+    private $quizRepo;
+    /** @var UserDataBaseRepository */
+    private $userRepo;
+    /** @var UserAnswerDataBaseRepository */
+    private $userAnswersRepo;
+    /**
+     * @var AnswerDataBaseRepository
+     */
+    private $answersRepo;
+    /**
+     * @var QuestionDatabaseRepository
+     */
+    private $questionRepo;
+
+    private $scoreRepo;
 
     public function __construct(
-        QuizRepository $quizzes,
-        UserRepository $users,
-        UserAnswerRepository $userAnswers
+        QuizDataBaseRepository $quizRepo,
+        UserDataBaseRepository $userRepo,
+        UserAnswerDataBaseRepository $userAnswersRepo,
+        AnswerDataBaseRepository $answersRepo,
+        QuestionDatabaseRepository $questionRepo,
+        UserScoreDataBaseRepository $scoreRepo
     ) {
-        $this->quizes = $quizzes;
-        $this->users = $users;
-        $this->userAnswers = $userAnswers;
+        $this->quizRepo = $quizRepo;
+        $this->userRepo = $userRepo;
+        $this->userAnswersRepo = $userAnswersRepo;
+        $this->answersRepo = $answersRepo;
+        $this->questionRepo = $questionRepo;
+        $this->scoreRepo = $scoreRepo;
     }
 
-    /**
-     * Get list of available quizes
-     *
-     * @return QuizModel[]
-     */
-    public function getQuizes(): array
+    public function getAllQuezzes()
     {
-        return $this->quizes->getList();
+        return $this->quizRepo->all();
     }
 
-    /**
-     * Register a new user
-     *
-     * @param string $name
-     * @return UserModel
-     */
-    public function registerUser(string $name): UserModel
+    public function getQuestion(int $quizId)
     {
-        $user = new UserModel;
-        $user->name = $name;
-
-        return $this->users->saveOrCreate($user);
-    }
-
-
-    /**
-     * Get list of questions for a specific quiz
-     *
-     * @param $quizId
-     * @return QuestionModel[]
-     */
-    public function getQuestions(int $quizId): array
-    {
-        return $this->quizes->getQuestions($quizId);
-    }
-
-    /**
-     * Get list of available answers for this question
-     *
-     * @param int $questionId
-     * @return AnswerModel[]
-     */
-    public function getAnswers(int $questionId): array
-    {
-        return $this->quizes->getAnswers($questionId);
-    }
-
-    /**
-     * Submit current users answer
-     *
-     * @param int $userId
-     * @param int $questionId
-     * @param int $answerId
-     * @param int $quizId
-     */
-    public function submitAnswer(int $userId, int $questionId, int $answerId, int $quizId)
-    {
-        $answer = new UserAnswerModel;
-        $answer->userId = $userId;
-        $answer->questionId = $questionId;
-        $answer->answerId = $answerId;
-        $answer->quizId = $quizId;
-
-        $this->userAnswers->saveAnswer($answer);
-    }
-
-    /**
-     * Check if user has answered all questions for this quiz (correct or incorrect)
-     *
-     * @param int $userId
-     * @param int $quizId
-     * @return bool
-     */
-    public function isQuizCompleted(int $userId, int $quizId): bool
-    {
-        $questionAmount = sizeof($this->quizes->getQuestions($quizId));
-        $answersAmount = sizeof($this->userAnswers->getAnswers($userId, $quizId));
-
-        return ($questionAmount == $answersAmount);
-    }
-
-    /**
-     * Get score in the quiz in percentage round(right answers / answer count * 100)
-     *
-     * @param int $userId
-     * @param int $quizId
-     * @return int 0-100
-     */
-
-    public function getScore(int $userId, int $quizId): int
-    {
-        $answerCount = 0;
-        $rightAnswers = 0;
-
-        foreach ($this->userAnswers->getAnswers($userId, $quizId) as $answer) {
-            $answerCount++;
-
-            foreach ($this->quizes->getAnswers($answer->questionId) as $ans) {
-                if ($ans->isCorrect) {
-                    $rightAnswers++;
-                }
-            }
-        }
-        if ($rightAnswers == 0) {
-            return 0;
-        }
-
-        return round(($rightAnswers / $answerCount) * 100);
-    }
-
-    /**
-     * Check if user exists in the system (is valid)
-     *
-     * @param int $userId
-     * @return bool
-     */
-    public function isExistingUser($userId): bool
-    {
-        if ($this->users->getById($userId)->id != null) {
-            return true;
-        }
-        return false;
-    }
-
-    public function isExistingQuiz($quizId)
-    {
-        $quizzes = $this->getQuizes();
-        foreach ($quizzes as $quiz) {
-            if ($quiz->id == $quizId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function isExistingQuestion($quizId, $questionId)
-    {
-        $questions = $this->quizes->getQuestions($quizId);
+        $condition["quiz_id"] = $quizId;
+        $select = [];
+        $questions = $this->questionRepo->all($condition, $select);
+        $preparedQuestions = [];
 
         foreach ($questions as $question) {
-            if ($question->id == $questionId) {
-                return true;
-            }
+            $tempArray['id'] = $question->id;
+            $tempArray['question'] = $question->question;
+            $tempArray['answers'] = $this->getAnswers($question->id);
+            $preparedQuestions[] = $tempArray;
         }
-        return false;
+
+        return $preparedQuestions;
     }
 
-    public function isExistingAnswer($questionId, $answerId)
+    public function getAnswers($questionId)
     {
-        $answers = $this->quizes->getAnswers($questionId);
+        $condition["question_id"] = $questionId;
+        $select[] = "id";
+        $select[] = "answer";
+        $answers = $this->answersRepo->all($condition, $select);
+        $preparedAnswers = [];
+        foreach ($answers as $answer) {
+            $tempArray['id'] = $answer->id;
+            $tempArray['answer'] = $answer->answer;
+            $preparedAnswers[] = $tempArray;
+        }
+        return $preparedAnswers;
+    }
+
+    /**
+     * @param $name
+     * @return BaseModel
+     */
+    public function saveUser($name)
+    {
+        /** @var BaseModel $user */
+        $user = $this->userRepo->create();
+        $user->name = $name;
+        $atribute = $this->userRepo->save($user);
+        $user->name = $atribute["name"];
+        $user->id = $atribute["id"];
+
+        return $atribute["id"];
+    }
+
+    public function getQuestionIdFromAnswer($answerId)
+    {
+        $condition["id"] = $answerId;
+        $result = $this->answersRepo->one($condition);
+        return $questionId = $result->questionId;
+    }
+
+    public function getQuizIdFromQuestion($questionId)
+    {
+        $condition["id"] = $questionId;
+        $result = $this->questionRepo->one($condition);
+        return $quizId = $result->quizId;
+
+    }
+
+    public function saveUserAnswer($answerId, $userId)
+    {
+
+        $questionId = $this->getQuestionIdFromAnswer($answerId);
+        $quizId = $this->getQuizIdFromQuestion($questionId);
+        $userAnswerModel = new UserAnswerModel();
+        $userAnswerModel->questionId = $questionId;
+        $userAnswerModel->quizId = $quizId;;
+        $userAnswerModel->answerId = $answerId;
+        $userAnswerModel->userId = $userId;
+        $this->userAnswersRepo->save($userAnswerModel);
+
+    }
+
+    public function getUserAnswers($userId)
+    {
+        $condition["user_id"] = $userId;
+        return $this->userAnswersRepo->all($condition);
+
+    }
+
+
+    public function isUserAnswerCorrect($userAnswer)
+    {
+        $condition['id'] = $userAnswer->answerId;
+
+        $answer = $this->answersRepo->one($condition);
+
+        return $answer->isCorrect;
+    }
+
+
+    public function getCorrectAnswers($userId)
+    {
+        $answers = $this->getUserAnswers($userId);
+        $correctAnswers = 0;
+        $totalAnswers = 0;
 
         foreach ($answers as $answer) {
-            if ($answer->id == $answerId) {
-                return true;
-            }
+            if ($this->isUserAnswerCorrect($answer)) {
+                $correctAnswers++;
+            };
+
+            $totalAnswers++;
         }
-        return false;
+
+        $result['totalAnswers'] = $totalAnswers;
+        $result['correctAnswers'] = $correctAnswers;
+
+        return $result;
+
     }
 
-    public function isUserAnswersValid($userId, $quizId)
+    public function postScore($userId, $quizId, $score)
     {
-        $userAnswers = $this->userAnswers->getAnswers($userId, $quizId);
-        foreach ($userAnswers as $userAnswer) {
-            $answerFound = false;
-            foreach ($this->quizes->getAnswers($userAnswer->questionId) as $answer) {
-                if ($answer->id == $userAnswer->answerId) {
-                    $answerFound = true;
-                }
-            }
-            if (!$answerFound) {
-                return false;
-            }
-        }
-        return true;
-    }
+        $scoreModel = new ScoreModel();
+        $scoreModel->userId = $userId;
+        $scoreModel->quizId = $quizId;
+        $scoreModel->score = $score;
+        $this->scoreRepo->save($scoreModel);
 
-
-    public function isDataValid($userId, $quizId, $questionId, $answerId)
-    {
-        if (!$this->isExistingQuiz($quizId) ||
-            !$this->isUserAnswersValid($userId, $quizId) ||
-            !$this->isExistingAnswer($questionId, $answerId) ||
-            !$this->isExistingQuestion($quizId, $questionId) ||
-            !$this->isExistingUser($userId)) {
-
-            return false;
-        }
-        return true;
     }
 
 

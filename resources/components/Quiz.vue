@@ -1,28 +1,40 @@
 <template>
     <div class="container">
         <div v-if="!activeQuestion && !result">
+            <h2 class="container__title">Sveiks!</h2>
 
-            <div>
-                <label>Your name</label>
-                <input type="text" v-model="name" />
+            <div class="container__input">
+                <div>
+                    <label class="container__input__labels">Ievadi vārdu :</label><br>
+                    <input class="container__input__inputFields" placeholder="Ievadiet Vārdu..." type="text"
+                           v-model="name"/>
+                </div>
+
+                <div>
+                    <label class="container__input__labels">Izvēlies testu:</label><br>
+
+
+
+
+                    <select class="container__input__inputFields" v-model="activeQuizId">
+                        <option value="" hidden>Example Placeholder</option>
+                        <option v-for="quiz in allQuizzes" :value="quiz.id">{{ quiz.name }}</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button class="container__input__inputFields" @click="onStart">Start</button>
+                </div>
+
             </div>
 
-            <div>
-                <label>Pick your quiz</label>
-                <select v-model="activeQuizId">
-                    <option v-for="quiz in allQuizzes" :value="quiz.id">{{ quiz.name }}</option>
-                </select>
-            </div>
-
-            <div>
-                <button @click="onStart">Start</button>
-            </div>
         </div>
 
         <div v-else-if="activeQuestion">
-            <div>Hello, {{name}}!</div>
-            <QuestionItem />
+            <h1 class="container__title">Hello, {{name}}!</h1>
+            <QuestionItem/>
         </div>
+
 
         <Results/>
 
@@ -39,7 +51,7 @@
 
     export default {
         name: "Quiz",
-        components:{QuestionItem, Results},
+        components: {QuestionItem, Results},
 
         computed: {
             name: {
@@ -74,8 +86,8 @@
 
             },
 
-            result:{
-                get(){
+            result: {
+                get() {
                     return this.$store.state.result;
                 }
             }
@@ -90,12 +102,12 @@
         ]), {
             onStart() {
                 if (!this.name) {
-                    alert('GIve me NAME');
+                    alert('Please enter name');
                     return;
                 }
 
                 if (!this.activeQuizId) {
-                    alert('pick Quiz');
+                    alert('Please pick Quiz');
                     return;
                 }
 

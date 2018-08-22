@@ -1,6 +1,12 @@
 <?php
 
-use Quiz\Controllers\BaseController;
+use Quiz\Repositories\AnswerDataBaseRepository;
+use Quiz\Repositories\QuestionDatabaseRepository;
+use Quiz\Repositories\QuizDataBaseRepository;
+use Quiz\Repositories\UserAnswerDataBaseRepository;
+use Quiz\Repositories\UserDataBaseRepository;
+use Quiz\Repositories\UserScoreDataBaseRepository;
+use Quiz\Services\QuizServiceTwo;
 
 include_once '../bootstrap.php';
 
@@ -8,6 +14,17 @@ include_once '../bootstrap.php';
 define('BASE_DIR', __DIR__ . '/..');
 define('SOURCE_DIR', BASE_DIR . '/src');
 define('VIEW_DIR', SOURCE_DIR . '/views');
+
+
+$quizRepo = new QuizDataBaseRepository();
+$userRepo = new UserDataBaseRepository();
+$userAnswersRepo = new UserAnswerDataBaseRepository();
+$answersRepo = new AnswerDataBaseRepository();
+$questionRepo = new QuestionDatabaseRepository();
+$scoreRepo = new UserScoreDataBaseRepository();
+
+$service = new QuizServiceTwo($quizRepo,$userRepo,$userAnswersRepo,$answersRepo,$questionRepo,$scoreRepo);
+
 
 
 $requestUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -25,8 +42,5 @@ if ($contentType == "application/json") {
 }
 
 
-
-/** @var BaseController $controller */
-
-$controller = new $controllerName;
+$controller = new $controllerName($service);
 $controller->handleCall($actionName);

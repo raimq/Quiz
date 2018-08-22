@@ -62,16 +62,24 @@ export default new Vuex.Store({
 
         },
 
-        answer(context,answerId){
-            QuizRepository.answer(answerId)
-                .then(questionOrResults=>{
-                    if(questionOrResults instanceof Question){
-                        context.commit(types.SET_QUESTION,questionOrResults);
+        answer(context, answerId) {
+            console.log('TIEKU TEEE');
+            console.log(answerId);
+            QuizRepository.answer(answerId, this.state.activeQuizId)
+                .then(questionOrResults => {
+                    if (questionOrResults instanceof Question) {
+                        context.commit(types.SET_QUESTION, questionOrResults);
                     } else {
-                        context.commit(types.SET_QUESTION,null);
-                        context.commit(types.SET_RESULTS,questionOrResults);
+                        context.commit(types.SET_QUESTION, null);
+                        context.commit(types.SET_RESULTS, questionOrResults);
                     }
-                })
-        }
+                });
+        },
+
+        restart(context) {
+            context.commit(types.SET_ACTIVE_QUIZ, null);
+            context.commit(types.SET_RESULTS, null);
+        },
+
     }
 });
