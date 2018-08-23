@@ -3,7 +3,10 @@
 namespace Quiz\Services;
 
 
+use Quiz\Models\AnswerModel;
 use Quiz\Models\BaseModel;
+use Quiz\Models\QuestionModel;
+use Quiz\Models\QuizModel;
 use Quiz\Models\ScoreModel;
 use Quiz\Models\UserAnswerModel;
 use Quiz\Repositories\AnswerDataBaseRepository;
@@ -59,12 +62,16 @@ class QuizServiceTwo
         $select = [];
         $questions = $this->questionRepo->all($condition, $select);
         $preparedQuestions = [];
+        $currentQuestion = 0;
+
 
         foreach ($questions as $question) {
             $tempArray['id'] = $question->id;
             $tempArray['question'] = $question->question;
             $tempArray['answers'] = $this->getAnswers($question->id);
+            $tempArray['percentCompleted'] = $this->getPercentCompleted($currentQuestion, $quizId);
             $preparedQuestions[] = $tempArray;
+            $currentQuestion++;
         }
 
         return $preparedQuestions;
@@ -176,7 +183,85 @@ class QuizServiceTwo
         $scoreModel->quizId = $quizId;
         $scoreModel->score = $score;
         $this->scoreRepo->save($scoreModel);
+    }
 
+
+    public function getAmountOfQuestions($quizId)
+    {
+        $condition['quiz_id'] = $quizId;
+        $questions = $this->questionRepo->all($condition);
+        $amountOfQuestions = 0;
+        foreach ($questions as $question) {
+            $amountOfQuestions++;
+        }
+        return $amountOfQuestions;
+    }
+
+    public function getPercentCompleted($currentQuestion, $quizId)
+    {
+        $amountOfQuestions = $this->getAmountOfQuestions($quizId);
+        if ($currentQuestion == 0) {
+            return 0;
+        }
+        return ($currentQuestion / $amountOfQuestions) * 100;
+    }
+
+
+    public function saveQuiz($quiz)
+    {
+        $answers = $quiz[0];
+        $questions = $quiz[1];
+        $name = $quiz[2];
+
+        $quiz = new QuizModel();
+        $quiz->name = $name;
+        $attributes = $this->quizRepo->save($quiz);
+
+        $quizId = $attributes['id'];
+
+        foreach ($questions as $question) {
+
+            $questionId = $this->saveQuestion($quizId, $question);
+
+            foreach ($answers as $answer) {
+                if ($answer['questionId'] == $question['id']) {
+                    $this->saveAnswers($questionId, $answer);
+                }
+            }
+        }
+        return true;
+
+    }
+
+
+    public function saveQuestion($quizId, $question)
+    {
+        $questionModel = new QuestionModel();
+        $questionModel->quizId = $quizId;
+        $questionModel->question = $question["name"];
+
+        $attributes = $this->questionRepo->save($questionModel);
+        $questionId = $attributes['id'];
+        return $questionId;
+
+    }
+
+
+    public function saveAnswers($questionId, $answer)
+    {
+        $answerModel = new AnswerModel();
+        $answerModel->answer = $answer['name'];
+        $answerModel->questionId = $questionId;
+
+        if ($answer['isCorrect'] == true) {
+            $answerModel->isCorrect = 1;
+        }
+
+        if ($answer['isCorrect'] == false) {
+            $answerModel->isCorrect = 0;
+        }
+
+        return $this->answersRepo->save($answerModel);
     }
 
 

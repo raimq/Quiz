@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div v-if="!activeQuestion && !result">
+        <div v-if="!activeQuestion && !result && !admin">
             <h2 class="container__title">Sveiks!</h2>
 
             <div class="container__input">
@@ -14,16 +14,13 @@
                     <label class="container__input__labels">Izvēlies testu:</label><br>
 
 
-
-
                     <select class="container__input__inputFields" v-model="activeQuizId">
-                        <option value="" hidden>Example Placeholder</option>
                         <option v-for="quiz in allQuizzes" :value="quiz.id">{{ quiz.name }}</option>
                     </select>
                 </div>
 
                 <div>
-                    <button class="container__input__inputFields" @click="onStart">Start</button>
+                    <button @click="onStart">Start</button>
                 </div>
 
             </div>
@@ -35,6 +32,15 @@
             <QuestionItem/>
         </div>
 
+        <div v-if="name ==='admin'">
+            <input class="container__input__inputFields" placeholder="Ievadiet paroli:" type="password"
+                   v-model="password"/>
+            <button @click="onAddQuiz">Add Quiz</button>
+        </div>
+
+        <div v-if="admin">
+            <AddQuiz/>
+        </div>
 
         <Results/>
 
@@ -47,11 +53,12 @@
     import Quiz from '../models/model.quiz';
     import QuestionItem from "./QuestionItem";
     import Results from './Results';
+    import AddQuiz from './AddQuiz';
 
 
     export default {
         name: "Quiz",
-        components: {QuestionItem, Results},
+        components: {QuestionItem, Results, AddQuiz},
 
         computed: {
             name: {
@@ -63,6 +70,7 @@
                     this.setName(newName);
                 }
             },
+
 
             activeQuizId: {
                 get() {
@@ -90,15 +98,31 @@
                 get() {
                     return this.$store.state.result;
                 }
-            }
+            },
 
+            admin: {
+                get() {
+                    return this.$store.state.admin;
+                }
+            },
+
+            password: {
+                set(password) {
+                    this.setPassword(password);
+                },
+                get() {
+                    return this.$store.state.password;
+                }
+            }
 
         },
         methods: Object.assign({}, mapActions([
             'setAllQuizzes',
             'setActiveQuizId',
             'setName',
-            'start'
+            'start',
+            'setAdmin',
+            'setPassword',
         ]), {
             onStart() {
                 if (!this.name) {
@@ -112,7 +136,13 @@
                 }
 
                 this.start();
-            }
+            },
+
+            onAddQuiz() {
+                this.name = '';
+                console.log("onAddQuiz");
+                this.setAdmin();
+            },
 
 
         }),

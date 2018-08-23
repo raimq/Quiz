@@ -4,6 +4,7 @@
 
 <script>
     import Answer from '../models/model.answer.js';
+
     export default {
         name: "AnswerItem",
         props: {
@@ -16,7 +17,7 @@
                 type: Function,
                 required: true,
             },
-            isActive:Boolean,
+            isActive: Boolean,
         },
 
         methods: {

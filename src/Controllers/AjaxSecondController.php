@@ -43,6 +43,7 @@ class AjaxSecondController extends BaseAjaxController
         ];
     }
 
+
     public function startAction()
     {
         $quizId = $_POST["quizId"];
@@ -50,15 +51,29 @@ class AjaxSecondController extends BaseAjaxController
         $_SESSION['questionIndex'] = 0;
         $userId = $this->quizService->saveUser($name);
         $_SESSION['userId'] = $userId;
-
         return $this->getQuestion($quizId);
     }
 
-    public function testArea()
+    public function newQuizAction()
     {
-        $this->quizService->getCorrectAnswers(358);
+        $data = $_POST['quiz'];
+
+        $tempData = $this->quizService->saveQuiz($data);
+
+        return $tempData;
+    }
+
+
+    public function passwordCheckAction()
+    {
+        if ($_POST['password'] == 'asd') {
+            return true;
+        }
+
+        return false;
 
     }
+
 
     public function answerAction()
     {
@@ -73,6 +88,10 @@ class AjaxSecondController extends BaseAjaxController
 
         return $this->getQuestion($quizId, $index);
     }
+
+
+
+//    TODO:REFRACTOR
 
     public function getQuestion($quizId, int $index = 0)
     {

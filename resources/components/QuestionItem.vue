@@ -3,14 +3,13 @@
     <div class="container__questions">
         <h2 class="container__questions__question">{{question.question}}</h2>
         <ul class="container__questions__answers">
-            <li class="container__questions__answers__item" v-for="answer in question.answers" >
+            <li class="container__questions__answers__item" v-for="answer in question.answers">
                 <AnswerItem class="container__questions__answers__item__listText" :answer="answer"
                             :on-answered="onAnswerPicked"/>
-
             </li>
-
-
         </ul>
+
+        <progress class="container__questions__progressBar" :value=question.percentCompleted max="100"></progress>
 
         <div class="container__questions__button">
             <button class="container__questions__button_text" @click.stop="onAnswered">Next Question</button>

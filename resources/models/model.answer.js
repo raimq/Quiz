@@ -1,7 +1,5 @@
-
-
 export default class Answer {
-    constructor(){
+    constructor() {
         /**
          *
          * @type {?number}
@@ -15,7 +13,7 @@ export default class Answer {
         this.answer = '';
     }
 
-    static fromArray(rawData){
+    static fromArray(rawData) {
         let answer = new Answer();
         answer.id = rawData.id;
         answer.answer = rawData.answer;

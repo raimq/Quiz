@@ -1,5 +1,5 @@
 <template>
-    
+
 </template>
 
 <script>
@@ -7,7 +7,3 @@
         name: "App"
     }
 </script>
-
-<style scoped>
-
-</style>

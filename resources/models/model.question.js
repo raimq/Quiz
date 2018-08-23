@@ -1,7 +1,7 @@
 import Answer from "./model.answer";
 
 export default class Question {
-    constructor(){
+    constructor() {
         /**
          *
          * @type {?number}
@@ -17,6 +17,8 @@ export default class Question {
          * @type {Array<Answer>}
          */
         this.answers = [];
+
+        this.percentCompleted = null;
     }
 
     /**
@@ -24,12 +26,12 @@ export default class Question {
      * @param {{}}rawData
      * @return {Question}
      */
-    static fromArray(rawData){
+    static fromArray(rawData) {
         let question = new Question();
         question.id = rawData.id;
         question.question = rawData.question;
         question.answers = rawData.answers.map(Answer.fromArray);
-
+        question.percentCompleted = rawData.percentCompleted;
         return question;
     }
 }

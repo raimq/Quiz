@@ -28,7 +28,7 @@ class QuizRepository {
 
     start(name, quizId) {
         return new Promise(resolve => {
-            console.log("quizID" , quizId);
+            console.log("quizID", quizId);
             this.quizApi.post('start', {name, quizId})
                 .then(response => {
                     let question = Question.fromArray(response.data.result);
@@ -39,10 +39,10 @@ class QuizRepository {
         })
     }
 
-    answer(answerId,quizId) {
+    answer(answerId, quizId) {
         console.log("quizId:", quizId);
         return new Promise(resolve => {
-            this.quizApi.post('answer', {answerId,quizId})
+            this.quizApi.post('answer', {answerId, quizId})
                 .then(response => {
                     console.log(response);
                     resolve(
@@ -56,6 +56,28 @@ class QuizRepository {
                 })
         })
     }
+
+    saveQuiz(quiz) {
+        console.log('Quiz:', quiz);
+        return new Promise(resolve => {
+            this.quizApi.post('newQuiz', {quiz})
+                .then(response => {
+                    console.log(response);
+                })
+        })
+    }
+
+    getIfPasswordCorrect(password) {
+        return new Promise(resolve => {
+            this.quizApi.post('passwordCheck', {password})
+                .then(response => {
+                    let answer = response.data.result;
+                    resolve(answer);
+                })
+        })
+    }
+
+
 }
 
 export default new QuizRepository();

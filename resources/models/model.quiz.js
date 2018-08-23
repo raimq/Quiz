@@ -1,6 +1,6 @@
 export default class Quiz {
 
-    constructor(){
+    constructor() {
         /**
          *
          * @type {?number}
@@ -19,7 +19,7 @@ export default class Quiz {
      * @param rawData
      * @returns {Quiz}
      */
-    static fromArray(rawData){
+    static fromArray(rawData) {
         let quiz = new Quiz();
         quiz.id = rawData.id;
         quiz.name = rawData.name;
